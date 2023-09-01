@@ -1,0 +1,280 @@
+:root{
+ 
+    --backContainer: rgba(38, 37, 37, 0.5);
+    --backContainerSecond: rgba(217, 217, 217, 0.2);
+    --backContainerSecond2: rgba(211, 211, 211, 0.30);
+    --backHoverBtn: #9A82DB ;
+    
+}
+
+*{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    font-family: 'Roboto-Regular', sans-serif;
+}
+
+
+body{
+
+    width: 100vw;
+    height: 100vh;
+    color: #fff;
+}
+
+.containerMain{
+
+    height: 100%;
+    display: flex;
+
+    background: url(./img/bgRain.jpg);
+
+
+}
+
+/* --------------------------------------------------------- */
+
+.containerLeft{
+
+    flex-grow: 2;
+
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+
+
+}
+
+.containerDateAndTitleWeather{
+
+    flex-grow: 2;
+
+    display: flex;
+    flex-direction: column;
+    align-items: end;
+
+    justify-content: space-between;
+}
+
+.containerDateAndTime{
+
+    display: flex;
+    gap: 10px;
+
+    padding: 10px;
+
+    border-radius: 10px;
+
+    /* background-color: rgba(0, 0, 0, 0.507); */
+    background-color: var(--backContainer)
+}
+
+.titleWeather{
+
+    font-size: 5em;
+
+}
+
+.containerCardsWeather{
+
+    display: flex;
+    gap: 20px;
+
+}
+
+.containerCard{
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+
+
+}
+
+.cardStyle{
+
+    padding: 10px;
+    border-radius: 10px;
+    background-color: var(--backContainer);
+
+}
+
+.svgWeather{
+
+    padding: 10px;
+    border-radius: 5px;
+    background-color: var(--backContainerSecond2);
+
+}
+
+/* --------------------------------------------------------- */
+
+.containerRight{
+
+    display: flex;
+    flex-direction: column;
+
+    background-color: var(--backContainerSecond);
+    background-color: rgba(0, 0, 0, 0.30);
+    backdrop-filter:blur(10px);
+}
+
+.weatherWidget{
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+
+    padding: 20px;
+
+}
+
+.containerSearchBar{
+
+    display: flex;
+    gap: 5px;
+    padding: 5px;
+    background-color: var(--backContainer);
+    border-radius: 10px;
+}
+
+.searchBar{
+
+    background-color: transparent;
+    border: none;
+    outline: none;
+}
+
+.svgUbication{
+
+    display: flex;
+    align-items: center;
+}
+
+.containerCOrF{
+
+    display: flex;
+    gap: 5px;
+    background-color: var(--backContainerSecond2);
+    border-radius: 10px;
+    padding: 5px;
+}
+
+.styleOp{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    /* background-color: var(--backContainerSecond2); */
+    /* width: 30px; */
+    /* height: 30px; */
+    border-radius: 5px;
+    padding: 10px;
+    cursor: pointer;
+
+    transition: all 0.15s ease-in-out;
+
+    color: black;
+}
+
+.celcius,.fahrenheit{
+
+    height: 16px;
+    width: 18px;
+}
+
+.styleOp:hover{
+
+    background-color: var(--backContainer);
+    color: #fff;
+}
+
+.titleGrades{
+
+    font-size: 5em;
+    color: #fff;
+}
+
+.weatherNextDays{
+
+    flex-grow: 2;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0 20px 20px 20px;
+    gap: 10px;
+}
+
+.titleNextDays{
+
+    font-size: 1.3em;
+}
+
+.containerOpDays{
+
+    display: flex;
+    gap: 5px;
+
+    background-color: var(--backContainerSecond2);
+    border-radius: 10px;
+    padding: 5px;
+}
+
+.opDaysStyle{
+
+   user-select: none;
+
+   cursor: pointer;
+
+   /* background-color: var(--backContainer); */
+
+   border-radius: 5px;
+   padding: 5px;
+
+   transition: all 0.15s ease-in-out;
+}
+
+.opDaysStyle:hover{
+
+    background-color: var(--backContainer);
+}
+
+.containerCardsNextDays{
+
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+}
+
+.cardNextDays{
+
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.svgWeatherNextDays{
+
+    background-color: var(--backContainerSecond2);
+    border-radius: 10px;
+    padding: 10px;
+
+}
+
+.titleWeatherNextDays{
+
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.containerDegressNextDays{
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+}
+/* --------------------------------------------------------- */
+
