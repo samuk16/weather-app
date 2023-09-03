@@ -134,17 +134,18 @@ body{
 .containerSearchBar{
 
     display: flex;
+    align-items: center;
     gap: 5px;
     padding: 5px;
     background-color: var(--backContainer);
     border-radius: 10px;
+
+    cursor: pointer;
 }
 
-.searchBar{
+.pSearchCountry{
 
-    background-color: transparent;
-    border: none;
-    outline: none;
+    user-select: none;
 }
 
 .svgUbication{
@@ -278,3 +279,89 @@ body{
 }
 /* --------------------------------------------------------- */
 
+.containerCountryFinder{
+
+    position: absolute;
+    top: 50%;
+    right: 50%;
+    transform: translate(50%, -50%);
+
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    background-color: var(--backContainer);
+    border-radius: 10px;
+    padding: 20px;
+
+}
+
+.searchCountryCards{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.titleAndSearchBar{
+
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.searchBarAndGps{
+
+    display: flex;
+    gap: 10px;
+}
+
+.searchBar{
+
+    background-color: var(--backContainerSecond2);
+    border: none;
+    outline: none;
+
+    border-radius: 5px;
+    padding: 5px;
+    flex-grow: 2;
+}
+
+.containerGps{
+
+    display: flex;
+    padding: 5px;
+    background-color: var(--backContainerSecond2);
+    border-radius: 5px;
+
+    cursor: pointer;
+
+}
+
+.containerSearchCard{
+
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    padding: 10px;
+    border-radius: 5px;
+    outline: solid 2px var(--backContainerSecond2);
+
+    cursor: pointer;
+    user-select: none;
+
+    
+    /* width: 300px; */
+    min-width: 400px;
+    max-width: 500px;
+}
+
+.flagAndName{
+
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.locationData{
+
+    color: rgba(255, 255, 255, 0.6);
+}
