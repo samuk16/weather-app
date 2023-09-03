@@ -135,6 +135,32 @@ function flagT() {
 
 }
 
+function createCountrySearchElements() {
+    
+    const containerSearchBar = document.querySelector('.containerSearchBar');
+
+    containerSearchBar.addEventListener('click', () => {
+
+        EventManager.emit('createElements', arrCountryFinder)
+        inputCountry();
+    })
+}
+
+function inputCountry() {
+    
+    const searchBar = document.querySelector('.searchBar')
+
+    searchBar.addEventListener('keyup', (e => {
+        
+        let test = e.target;
+
+        // console.log(test.value);
+        
+        searchCountry(test.value)
+
+    }))
+}
+
 async function searchCountry(searchData) {
 
     try {
