@@ -123,6 +123,13 @@ const testFlag = [
 
 ];
 
+const countryLatAndLong = {
+
+    latitude: 'a',
+    longitude: 'a',
+
+};
+
 function flagT() {
     
     testFlag[0].attributes.src = 'https://hatscripts.github.io/circle-flags/flags/ar.svg';
@@ -195,7 +202,66 @@ async function weatherData(latitude,longitude) {
     }
 }
 
+function generateCountryCards(arr) {
+    
 
+    delCountryCards();
+
+    arr.forEach(countryData => {
+        
+        let codeCLowerCase = countryData.country_code.toLowerCase();
+
+        // itemProject[0].attributes.class = `itemProject item${project.id}`;
+
+        arrCountryCard[0].attributes.id = `${countryData.id}`;
+
+        arrCountryCard[0].attributes['data-lat'] = `${countryData.latitude}`;
+        arrCountryCard[0].attributes['data-long'] = `${countryData.longitude}`;
+
+        arrCountryCard[0].attributes.class = `containerSearchCard card${countryData.id}`;
+
+        arrCountryCard[1].attributes.class = `flagAndName fn${countryData.id}`;
+        
+        arrCountryCard[3].attributes.src = `https://hatscripts.github.io/circle-flags/flags/${codeCLowerCase}.svg`;
+
+        arrCountryCard[4].innerText = `${countryData.name}`;
+
+        arrCountryCard[2].innerText = `${countryData.name} (${countryData.latitude} ${countryData.longitude})`;
+
+        arrCountryCard[1].appendChild = `.card${countryData.id}`;
+        arrCountryCard[2].appendChild = `.card${countryData.id}`;
+
+        arrCountryCard[3].appendChild = `.fn${countryData.id}`;
+        arrCountryCard[4].appendChild = `.fn${countryData.id}`;
+
+        EventManager.emit('createElements', arrCountryCard)
+
+        getLatAndLong(`card${countryData.id}`);
+    });
+
+}
+
+
+function delCountryCards() {
+    
+    const searchCountryCards = document.querySelector('.searchCountryCards');
+
+    while (searchCountryCards.firstChild) {
+        searchCountryCards.removeChild(searchCountryCards.firstChild);
+    }
+
+}
+
+function getLatAndLong(clas) {
+    const card = document.querySelector(`.${clas}`);
+
+    card.addEventListener('click', () => {
+        countryLatAndLong.latitude = `${card.dataset.lat}`;
+        countryLatAndLong.longitude = `${card.dataset.long}`;
+
+    })
+
+}
 
 
 export {arrCountryFinder,arrCountryCard, createCountrySearchElements}
