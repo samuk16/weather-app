@@ -127,8 +127,126 @@ const countryLatAndLong = {
 
     latitude: 'a',
     longitude: 'a',
+    cOf: 'c',
+    forecastDays:'xd',
 
 };
+
+const arrCardsWeather = [
+
+    {
+        elementType: 'div',
+        attributes: {class:'containerCard cardStyle'},
+        appendChild: '.containerCardsWeather',
+
+    },
+
+    // childs containerCardsWeather
+
+    {
+        elementType: 'div',
+        attributes: {class:'timeCardWeather'},
+        innerText: '09:00',
+        appendChild: '.containerCard',
+
+    },
+    
+    {
+        elementType: 'div',
+        attributes: {class:'svgWeather'},
+        // innerHTML: '<?xml version="1.0" encoding="UTF-8"?><svg width="24px" height="24px" stroke-width="1.5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" color="#000000" data-darkreader-inline-color="" style="--darkreader-inline-color: #e8e6e3;"><path d="M6 13c-1.667 0-5 1-5 5s3.333 5 5 5h12c1.667 0 5-1 5-5s-3.333-5-5-5M12 12a3 3 0 100-6 3 3 0 000 6zM19 9h1M12 2V1M18.5 3.5l-1 1M5.5 3.5l1 1M4 9h1" stroke="#000000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-darkreader-inline-stroke="" style="--darkreader-inline-stroke: #000000;"></path></svg>',
+        appendChild: '.containerCard',
+
+    },
+
+    {
+        elementType: 'p',
+        attributes: {class:'degrees'},
+        innerText: '9°C',
+        appendChild: '.containerCard',
+
+    },
+
+    // childs svgWeather
+
+    {
+        elementType: 'img',
+        attributes: {class:'iconWeather',src:'https://hatscripts.github.io/circle-flags/flags/ar.svg', width:'24'},
+        appendChild: '.svgWeather',
+
+    },
+
+]
+const arrCardsNextDays = [
+
+    {
+        elementType: 'div',
+        attributes: {class:'cardNextDays'},
+        appendChild: '.containerCardsNextDays',
+
+    },
+
+    // childs cardNextDays
+
+    {
+        elementType: 'div',
+        attributes: {class:'svgWeatherNextDays'},
+        innerHTML: '<?xml version="1.0" encoding="UTF-8"?><svg width="24px" height="24px" stroke-width="1.5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" color="#000000" data-darkreader-inline-color="" style="--darkreader-inline-color: #e8e6e3;"><path d="M6 13c-1.667 0-5 1-5 5s3.333 5 5 5h12c1.667 0 5-1 5-5s-3.333-5-5-5M12 12a3 3 0 100-6 3 3 0 000 6zM19 9h1M12 2V1M18.5 3.5l-1 1M5.5 3.5l1 1M4 9h1" stroke="#000000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-darkreader-inline-stroke="" style="--darkreader-inline-stroke: #000000;"></path></svg>',
+        appendChild: '.cardNextDays',
+
+    },
+
+    {
+        elementType: 'div',
+        attributes: {class:'dateAndWeatherTitle'},
+        appendChild: '.cardNextDays',
+
+    },
+
+    {
+        elementType: 'div',
+        attributes: {class:'containerDegressNextDays'},
+        appendChild: '.cardNextDays',
+
+    },
+    
+    //  childs dateAndWeatherTitle
+
+    {
+        elementType: 'p',
+        attributes: {class:'dateNextDays'},
+        innerText: 'Friday, September 1',
+        appendChild: '.dateAndWeatherTitle',
+
+    },
+
+    {
+        elementType: 'p',
+        attributes: {class:'titleWeatherNextDays'},
+        innerText: 'Heavy Rain',
+        appendChild: '.dateAndWeatherTitle',
+
+    },
+
+    // childs containerDegressNextDays
+
+    {
+        elementType: 'p',
+        attributes: {class:'degreesNextDays'},
+        innerText: '9°',
+        appendChild: '.containerDegressNextDays',
+
+    },
+
+    {
+        elementType: 'p',
+        attributes: {class:'degreesNextDays'},
+        innerText: '16°',
+        appendChild: '.containerDegressNextDays',
+
+    },
+
+]
 
 function flagT() {
     
@@ -187,15 +305,21 @@ async function searchCountry(searchData) {
 
 }
 
-async function weatherData(latitude,longitude) {
+async function weatherData(latitude,longitude,cOF,forecastDays) {
     
     try {
         
-        const response = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=-24.7859&longitude=-65.4117&hourly=temperature_2m&forecast_days=1`, {mode: 'cors'});
-
+        // const response2 = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat={${latitude}}&lon={${longitude}}&appid={2a4b5108a38fd94814fb633b7a60a70b}`, {mode: 'cors'});
+        const response = await fetch(`http://api.weatherapi.com/v1/forecast.json?key=b2845727c0964864b50235958232908&q=${latitude},${longitude}&days=3&aqi=no&alerts=no`, {mode: 'cors'});
+        
+        // const weatherData2 = await response2.json();
         const weatherData = await response.json();
 
-        console.log(weatherData);
+        generateWeatherCardsHour(weatherData.forecast.forecastday[0].hour)
+
+        // console.log(weatherData.forecast.forecastday[0]);
+        // console.log(weatherData.forecast.forecastday[0].hour[0].time.slice(-5));
+        // console.log(weatherData2);
 
     } catch (error) {
         console.log(error);
@@ -237,6 +361,7 @@ function generateCountryCards(arr) {
         EventManager.emit('createElements', arrCountryCard)
 
         getLatAndLong(`card${countryData.id}`);
+        cardSelected(`card${countryData.id}`)
     });
 
 }
@@ -263,5 +388,46 @@ function getLatAndLong(clas) {
 
 }
 
+function cardSelected(clas) {
+    
+    const card = document.querySelector(`.${clas}`);
+    const containerCountryFinder = document.querySelector('.containerCountryFinder');
+    card.addEventListener('click', () => {
+        
+        EventManager.emit('deleteElement', containerCountryFinder)
+        weatherData(countryLatAndLong.latitude,countryLatAndLong.longitude)
 
+    })
+
+
+}
+
+function generateWeatherCardsHour(arr) {
+    
+    arr.forEach(weatherData => {
+
+        arrCardsWeather[0].attributes.class = `containerCard cardStyle card${weatherData.time_epoch}`;
+        
+        arrCardsWeather[1].innerText = `${weatherData.time.slice(-5)}`;
+        
+        arrCardsWeather[2].attributes.class = `svgWeather weather${weatherData.time_epoch}`;
+
+        arrCardsWeather[4].attributes.src = `${weatherData.condition.icon}`;
+
+        arrCardsWeather[4].attributes.src = `${weatherData.condition.icon}`;
+
+        arrCardsWeather[3].innerText = `${weatherData.temp_c}C`;
+
+        arrCardsWeather[1].appendChild = `.card${weatherData.time_epoch}`;
+        arrCardsWeather[2].appendChild = `.card${weatherData.time_epoch}`;
+        arrCardsWeather[3].appendChild = `.card${weatherData.time_epoch}`;
+        
+        arrCardsWeather[4].appendChild = `.weather${weatherData.time_epoch}`;
+
+        EventManager.emit('createElements', arrCardsWeather)
+
+
+    })
+
+}
 export {arrCountryFinder,arrCountryCard, createCountrySearchElements}
