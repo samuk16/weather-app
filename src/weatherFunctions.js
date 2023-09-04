@@ -316,7 +316,7 @@ async function weatherData(latitude,longitude,cOF,forecastDays) {
         const weatherData = await response.json();
 
         generateWeatherCardsHour(weatherData.forecast.forecastday[0].hour)
-
+        fillData(weatherData.current)
         // console.log(weatherData.forecast.forecastday[0]);
         // console.log(weatherData.forecast.forecastday[0].hour[0].time.slice(-5));
         // console.log(weatherData2);
@@ -416,7 +416,7 @@ function generateWeatherCardsHour(arr) {
 
         arrCardsWeather[4].attributes.src = `${weatherData.condition.icon}`;
 
-        arrCardsWeather[3].innerText = `${weatherData.temp_c}C`;
+        arrCardsWeather[3].innerText = `${parseInt(weatherData.temp_c)}°C`;
 
         arrCardsWeather[1].appendChild = `.card${weatherData.time_epoch}`;
         arrCardsWeather[2].appendChild = `.card${weatherData.time_epoch}`;
@@ -430,4 +430,19 @@ function generateWeatherCardsHour(arr) {
     })
 
 }
+
+function fillData(currentDay) {
+    
+    const titleWeather = document.querySelector('.titleWeather');
+    const containerDateAndTime = document.querySelector('.containerDateAndTime');
+    const titleGrades = document.querySelector('.titleGrades');
+
+    titleWeather.innerText = `${currentDay.condition.text}`;
+    titleGrades.innerText = `${parseInt(currentDay.temp_c)}°C`;
+    containerDateAndTime.lastChild.innerText = `${currentDay.last_updated}`;
+
+
+}
+
+
 export {arrCountryFinder,arrCountryCard, createCountrySearchElements}
