@@ -1,6 +1,7 @@
 
 import { EventManager } from './pubSub';
 import { format } from 'date-fns';
+import ScrollBooster from 'scrollbooster';
 
 const arrCountryFinder = [
 
@@ -340,7 +341,7 @@ async function weatherData(latitude,longitude,cOF,forecastDays) {
 function generateCountryCards(arr) {
     
     
-    delCountryCards();
+    delCards('searchCountryCards');
 
     arr.forEach(countryData => {
         
@@ -379,12 +380,12 @@ function generateCountryCards(arr) {
 }
 
 
-function delCountryCards() {
+function delCards(clas) {
     
-    const searchCountryCards = document.querySelector('.searchCountryCards');
+    const containerCards = document.querySelector(`.${clas}`);
 
-    while (searchCountryCards.firstChild) {
-        searchCountryCards.removeChild(searchCountryCards.firstChild);
+    while (containerCards.firstChild) {
+        containerCards.removeChild(containerCards.firstChild);
     }
 
 }
@@ -416,6 +417,8 @@ function cardSelected(clas) {
 
 function generateWeatherCardsHour(arr) {
     
+    delCards('containerCardsWeather')
+
     arr.forEach(weatherData => {
 
         arrCardsWeather[0].attributes.class = `containerCard cardStyle card${weatherData.time_epoch}`;
@@ -440,7 +443,7 @@ function generateWeatherCardsHour(arr) {
 
 
     })
-
+    addScrollBoosterToCardsWeather();
 }
 
 function fillData(currentDay) {
@@ -458,6 +461,8 @@ function fillData(currentDay) {
 
 function generateWeatherCardsForecastDays(arr) {
     
+    delCards('containerCardsNextDays')
+
     arr.forEach(weatherData => {
 
         arrCardsNextDays[0].attributes.class = `cardNextDays cardNextDays${weatherData.date_epoch}`;
@@ -500,6 +505,18 @@ function generateWeatherCardsForecastDays(arr) {
 
     
 
+
+}
+
+function addScrollBoosterToCardsWeather() {
+    
+    new ScrollBooster({
+        viewport: document.querySelector('.outerCardsWeather'),
+        content: document.querySelector('.containerCardsWeather'),
+        scrollMode: 'transform', 
+        direction: 'horizontal', 
+        emulateScroll: true, 
+      });
 
 }
 
