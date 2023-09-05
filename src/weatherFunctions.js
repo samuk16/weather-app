@@ -257,7 +257,7 @@ const arrCardsNextDays = [
     },
 
 ]
-
+let currentUnit = 'C';
 let lastDataJson;
 function flagT() {
     
@@ -328,7 +328,9 @@ async function weatherData(latitude,longitude,cOF,forecastDays) {
         lastDataJson = weatherData;
         generateWeatherCardsHour(weatherData.forecast.forecastday[0].hour)
         generateWeatherCardsForecastDays(weatherData.forecast.forecastday)
-        fillData(weatherData.current)
+        fillData(weatherData);
+        addFunctionToBtnsCF();
+
         // console.log(weatherData.forecast.forecastday[0]);
         // console.log(weatherData.forecast.forecastday[0].hour[0].time.slice(-5));
         // console.log(weatherData2);
@@ -378,7 +380,6 @@ function generateCountryCards(arr) {
     });
 
 }
-
 
 function delCards(clas) {
     
@@ -431,7 +432,16 @@ function generateWeatherCardsHour(arr) {
 
         arrCardsWeather[4].attributes.src = `${weatherData.condition.icon}`;
 
-        arrCardsWeather[3].innerText = `${parseInt(weatherData.temp_c)}°C`;
+        if (currentUnit === 'C') {
+            
+            arrCardsWeather[3].innerText = `${parseInt(weatherData.temp_c)}°C`;
+
+        } else {
+            arrCardsWeather[3].innerText = `${parseInt(weatherData.temp_f)}°F`;
+
+        }
+        // arrCardsWeather[3].innerText = `${parseInt(weatherData.temp_c)}°C`;
+        // arrCardsWeather[3].innerText = `${parseInt(obtainData(lastDataJson,rute))}°${letter}`;
 
         arrCardsWeather[1].appendChild = `.card${weatherData.time_epoch}`;
         arrCardsWeather[2].appendChild = `.card${weatherData.time_epoch}`;
@@ -446,15 +456,25 @@ function generateWeatherCardsHour(arr) {
     addScrollBoosterToCardsWeather();
 }
 
-function fillData(currentDay) {
+function fillData(weatherData) {
     
     const titleWeather = document.querySelector('.titleWeather');
+    const titleCity = document.querySelector('.titleCity');
     const containerDateAndTime = document.querySelector('.containerDateAndTime');
     const titleGrades = document.querySelector('.titleGrades');
 
-    titleWeather.innerText = `${currentDay.condition.text}`;
-    titleGrades.innerText = `${parseInt(currentDay.temp_c)}°C`;
-    containerDateAndTime.lastChild.innerText = `${currentDay.last_updated}`;
+    titleWeather.innerText = `${weatherData.current.condition.text}`;
+    titleCity.innerText = `${weatherData.location.name}`;
+    // titleGrades.innerText = `${parseInt(weatherData.current.temp_c)}°C`;
+    if (currentUnit === 'C') {
+        titleGrades.innerText = `${parseInt(weatherData.current.temp_c)}°C`;
+
+    } else {
+        titleGrades.innerText = `${parseInt(weatherData.current.temp_f)}°F`;
+
+    }
+    // titleGrades.innerText = `${parseInt(obtainData(weatherData,rute))}°${letter}`;
+    containerDateAndTime.lastChild.innerText = `${weatherData.current.last_updated}`;
 
 
 }
@@ -489,8 +509,19 @@ function generateWeatherCardsForecastDays(arr) {
         arrCardsNextDays[4].appendChild = `.dAWT${weatherData.date_epoch}`;
         arrCardsNextDays[5].appendChild = `.dAWT${weatherData.date_epoch}`;
 
-        arrCardsNextDays[6].innerText = `${parseInt(weatherData.day.maxtemp_c)}`;
-        arrCardsNextDays[7].innerText = `${parseInt(weatherData.day.mintemp_c)}`;
+        if (currentUnit === 'C') {
+            arrCardsNextDays[6].innerText = `${parseInt(weatherData.day.maxtemp_c)}`;
+            arrCardsNextDays[7].innerText = `${parseInt(weatherData.day.mintemp_c)}`;
+
+        } else {
+            arrCardsNextDays[6].innerText = `${parseInt(weatherData.day.maxtemp_f)}`;
+            arrCardsNextDays[7].innerText = `${parseInt(weatherData.day.mintemp_f)}`;
+        }
+
+        // arrCardsNextDays[6].innerText = `${parseInt(obtainData(lastDataJson,rute))}`;
+        // arrCardsNextDays[6].innerText = `${parseInt(weatherData.day.maxtemp_c)}`;
+        // arrCardsNextDays[7].innerText = `${parseInt(weatherData.day.mintemp_c)}`;
+        // arrCardsNextDays[7].innerText = `${parseInt(obtainData(lastDataJson,rute))}`;
             
         arrCardsNextDays[6].appendChild = `.containerDegress${weatherData.date_epoch}`;
         arrCardsNextDays[7].appendChild = `.containerDegress${weatherData.date_epoch}`;
@@ -520,13 +551,30 @@ function addScrollBoosterToCardsWeather() {
 
 }
 
-function test() {
-    const containerfahrenheit = document.querySelector('.containerfahrenheit');
+function convertTemperatureUnit() {
 
-    containerfahrenheit.addEventListener('click', () =>{
-
-        console.log(lastDataJson.current);
-    });
+    generateWeatherCardsHour(lastDataJson.forecast.forecastday[0].hour)
+    fillData(lastDataJson)
+    generateWeatherCardsForecastDays(lastDataJson.forecast.forecastday)
+   
 }
 
-export {arrCountryFinder,arrCountryCard, createCountrySearchElements,test}
+
+function addFunctionToBtnsCF() {
+    
+    const containerCelcius = document.querySelector('.containerCelcius');
+    const containerfahrenheit  = document.querySelector('.containerfahrenheit ');
+
+    containerCelcius.addEventListener('click', () => {
+        currentUnit = 'C';
+        convertTemperatureUnit()
+    
+    })
+    containerfahrenheit.addEventListener('click', () => {
+        currentUnit = 'F';
+        convertTemperatureUnit()
+    })
+
+}
+
+export {arrCountryFinder,arrCountryCard, createCountrySearchElements}
