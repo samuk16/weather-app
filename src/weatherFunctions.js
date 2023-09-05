@@ -1,6 +1,6 @@
 
 import { EventManager } from './pubSub';
-
+import { format } from 'date-fns';
 
 const arrCountryFinder = [
 
@@ -171,7 +171,7 @@ const arrCardsWeather = [
 
     {
         elementType: 'img',
-        attributes: {class:'iconWeather',src:'https://hatscripts.github.io/circle-flags/flags/ar.svg', width:'24'},
+        attributes: {class:'iconWeather',src:'https://hatscripts.github.io/circle-flags/flags/ar.svg', width:'30'},
         appendChild: '.svgWeather',
 
     },
@@ -191,7 +191,7 @@ const arrCardsNextDays = [
     {
         elementType: 'div',
         attributes: {class:'svgWeatherNextDays'},
-        innerHTML: '<?xml version="1.0" encoding="UTF-8"?><svg width="24px" height="24px" stroke-width="1.5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" color="#000000" data-darkreader-inline-color="" style="--darkreader-inline-color: #e8e6e3;"><path d="M6 13c-1.667 0-5 1-5 5s3.333 5 5 5h12c1.667 0 5-1 5-5s-3.333-5-5-5M12 12a3 3 0 100-6 3 3 0 000 6zM19 9h1M12 2V1M18.5 3.5l-1 1M5.5 3.5l1 1M4 9h1" stroke="#000000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-darkreader-inline-stroke="" style="--darkreader-inline-stroke: #000000;"></path></svg>',
+        // innerHTML: '<?xml version="1.0" encoding="UTF-8"?><svg width="24px" height="24px" stroke-width="1.5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" color="#000000" data-darkreader-inline-color="" style="--darkreader-inline-color: #e8e6e3;"><path d="M6 13c-1.667 0-5 1-5 5s3.333 5 5 5h12c1.667 0 5-1 5-5s-3.333-5-5-5M12 12a3 3 0 100-6 3 3 0 000 6zM19 9h1M12 2V1M18.5 3.5l-1 1M5.5 3.5l1 1M4 9h1" stroke="#000000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-darkreader-inline-stroke="" style="--darkreader-inline-stroke: #000000;"></path></svg>',
         appendChild: '.cardNextDays',
 
     },
@@ -232,7 +232,7 @@ const arrCardsNextDays = [
 
     {
         elementType: 'p',
-        attributes: {class:'degreesNextDays'},
+        attributes: {class:'degreesMaxNextDays'},
         innerText: '9°',
         appendChild: '.containerDegressNextDays',
 
@@ -240,14 +240,24 @@ const arrCardsNextDays = [
 
     {
         elementType: 'p',
-        attributes: {class:'degreesNextDays'},
+        attributes: {class:'degreesMinNextDays'},
         innerText: '16°',
         appendChild: '.containerDegressNextDays',
 
     },
 
+    // childs svgWeatherNextDays
+
+    {
+        elementType: 'img',
+        attributes: {class:'iconWeatherNextDays',src:'https://hatscripts.github.io/circle-flags/flags/ar.svg', width:'30'},
+        appendChild: '.svgWeatherNextDays',
+
+    },
+
 ]
 
+let lastDataJson;
 function flagT() {
     
     testFlag[0].attributes.src = 'https://hatscripts.github.io/circle-flags/flags/ar.svg';
@@ -314,8 +324,9 @@ async function weatherData(latitude,longitude,cOF,forecastDays) {
         
         // const weatherData2 = await response2.json();
         const weatherData = await response.json();
-
+        lastDataJson = weatherData;
         generateWeatherCardsHour(weatherData.forecast.forecastday[0].hour)
+        generateWeatherCardsForecastDays(weatherData.forecast.forecastday)
         fillData(weatherData.current)
         // console.log(weatherData.forecast.forecastday[0]);
         // console.log(weatherData.forecast.forecastday[0].hour[0].time.slice(-5));
@@ -328,7 +339,7 @@ async function weatherData(latitude,longitude,cOF,forecastDays) {
 
 function generateCountryCards(arr) {
     
-
+    
     delCountryCards();
 
     arr.forEach(countryData => {
@@ -362,6 +373,7 @@ function generateCountryCards(arr) {
 
         getLatAndLong(`card${countryData.id}`);
         cardSelected(`card${countryData.id}`)
+        
     });
 
 }
@@ -444,5 +456,60 @@ function fillData(currentDay) {
 
 }
 
+function generateWeatherCardsForecastDays(arr) {
+    
+    arr.forEach(weatherData => {
 
-export {arrCountryFinder,arrCountryCard, createCountrySearchElements}
+        arrCardsNextDays[0].attributes.class = `cardNextDays cardNextDays${weatherData.date_epoch}`;
+
+        arrCardsNextDays[1].attributes.class = `svgWeatherNextDays svg${weatherData.date_epoch}`;
+
+        arrCardsNextDays[2].attributes.class = `dateAndWeatherTitle dAWT${weatherData.date_epoch}`;
+
+        arrCardsNextDays[3].attributes.class = `containerDegressNextDays containerDegress${weatherData.date_epoch}`;
+
+        arrCardsNextDays[1].appendChild = `.cardNextDays${weatherData.date_epoch}`;
+        arrCardsNextDays[2].appendChild = `.cardNextDays${weatherData.date_epoch}`;
+        arrCardsNextDays[3].appendChild = `.cardNextDays${weatherData.date_epoch}`;
+
+        
+        let [year, month, day] = weatherData.date.split('-');
+            
+        let dateFormated = format(new Date(parseInt(year),parseInt(month) - 1,parseInt(day)), " EEEE, dd MMM") ;
+
+        arrCardsNextDays[4].innerText = `${dateFormated}`;
+            
+        arrCardsNextDays[5].innerText = `${weatherData.day.condition.text}`;
+
+        arrCardsNextDays[4].appendChild = `.dAWT${weatherData.date_epoch}`;
+        arrCardsNextDays[5].appendChild = `.dAWT${weatherData.date_epoch}`;
+
+        arrCardsNextDays[6].innerText = `${parseInt(weatherData.day.maxtemp_c)}`;
+        arrCardsNextDays[7].innerText = `${parseInt(weatherData.day.mintemp_c)}`;
+            
+        arrCardsNextDays[6].appendChild = `.containerDegress${weatherData.date_epoch}`;
+        arrCardsNextDays[7].appendChild = `.containerDegress${weatherData.date_epoch}`;
+
+        arrCardsNextDays[8].attributes.src = `${weatherData.day.condition.icon}`;
+
+        arrCardsNextDays[8].appendChild = `.svg${weatherData.date_epoch}`;
+
+        EventManager.emit('createElements', arrCardsNextDays)
+        
+    })
+
+    
+
+
+}
+
+function test() {
+    const containerfahrenheit = document.querySelector('.containerfahrenheit');
+
+    containerfahrenheit.addEventListener('click', () =>{
+
+        console.log(lastDataJson.current);
+    });
+}
+
+export {arrCountryFinder,arrCountryCard, createCountrySearchElements,test}
