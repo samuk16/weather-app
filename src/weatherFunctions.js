@@ -257,8 +257,26 @@ const arrCardsNextDays = [
     },
 
 ]
+const loader = [
+    {
+        elementType: 'div',
+        attributes: {class:'showbox'},
+        appendChild: '.searchCountryCards',
+
+    },
+    {
+        elementType: 'div',
+        attributes: {class:'loader'},
+        innerHTML:'<svg class="circular" viewBox="25 25 50 50"><circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="2" stroke-miterlimit="10"/></svg>',
+        appendChild: '.showbox',
+
+    },
+];
+
 let currentUnit = 'C';
 let lastDataJson;
+let countryCode;
+
 function flagT() {
     
     testFlag[0].attributes.src = 'https://hatscripts.github.io/circle-flags/flags/ar.svg';
@@ -278,7 +296,10 @@ function createCountrySearchElements() {
     containerSearchBar.addEventListener('click', () => {
 
         EventManager.emit('createElements', arrCountryFinder)
+        
+
         inputCountry();
+
     })
 }
 
@@ -289,9 +310,12 @@ function inputCountry() {
     searchBar.addEventListener('keyup', (e => {
         
         let test = e.target;
-
+        const loaderElement = document.querySelector('.showbox');
         // console.log(test.value);
-        
+        if (!loaderElement) {
+            delCards('searchCountryCards');
+            EventManager.emit('createElements', loader)
+        }
         searchCountry(test.value)
 
     }))
@@ -302,7 +326,18 @@ async function searchCountry(searchData) {
     try {
         const response1 = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${searchData}&count=10&language=en&format=json`, {mode: 'cors'});
 
+        
+
         const countryData = await response1.json();
+
+        if (response1.ok) {
+
+            const loaderElement = document.querySelector('.showbox');
+
+            if (loaderElement) {
+                EventManager.emit('deleteElement', loaderElement)
+            }
+        }
 
         generateCountryCards(countryData.results);
         
@@ -316,24 +351,18 @@ async function searchCountry(searchData) {
 
 }
 
-async function weatherData(latitude,longitude,cOF,forecastDays) {
+async function weatherData(latitude,longitude) {
     
     try {
         
-        // const response2 = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat={${latitude}}&lon={${longitude}}&appid={2a4b5108a38fd94814fb633b7a60a70b}`, {mode: 'cors'});
         const response = await fetch(`http://api.weatherapi.com/v1/forecast.json?key=b2845727c0964864b50235958232908&q=${latitude},${longitude}&days=3&aqi=no&alerts=no`, {mode: 'cors'});
         
-        // const weatherData2 = await response2.json();
         const weatherData = await response.json();
         lastDataJson = weatherData;
         generateWeatherCardsHour(weatherData.forecast.forecastday[0].hour)
         generateWeatherCardsForecastDays(weatherData.forecast.forecastday)
         fillData(weatherData);
         addFunctionToBtnsCF();
-
-        // console.log(weatherData.forecast.forecastday[0]);
-        // console.log(weatherData.forecast.forecastday[0].hour[0].time.slice(-5));
-        // console.log(weatherData2);
 
     } catch (error) {
         console.log(error);
@@ -342,19 +371,17 @@ async function weatherData(latitude,longitude,cOF,forecastDays) {
 
 function generateCountryCards(arr) {
     
-    
     delCards('searchCountryCards');
 
     arr.forEach(countryData => {
         
         let codeCLowerCase = countryData.country_code.toLowerCase();
 
-        // itemProject[0].attributes.class = `itemProject item${project.id}`;
-
         arrCountryCard[0].attributes.id = `${countryData.id}`;
 
         arrCountryCard[0].attributes['data-lat'] = `${countryData.latitude}`;
         arrCountryCard[0].attributes['data-long'] = `${countryData.longitude}`;
+        arrCountryCard[0].attributes['data-codeC'] = `${countryData.country_code.toLowerCase()}`;
 
         arrCountryCard[0].attributes.class = `containerSearchCard card${countryData.id}`;
 
@@ -407,7 +434,7 @@ function cardSelected(clas) {
     const card = document.querySelector(`.${clas}`);
     const containerCountryFinder = document.querySelector('.containerCountryFinder');
     card.addEventListener('click', () => {
-        
+        countryCode = card.dataset.codec;
         EventManager.emit('deleteElement', containerCountryFinder)
         weatherData(countryLatAndLong.latitude,countryLatAndLong.longitude)
 
@@ -434,14 +461,12 @@ function generateWeatherCardsHour(arr) {
 
         if (currentUnit === 'C') {
             
-            arrCardsWeather[3].innerText = `${parseInt(weatherData.temp_c)}°C`;
+            arrCardsWeather[3].innerText = `${parseInt(weatherData.temp_c)}°`;
 
         } else {
-            arrCardsWeather[3].innerText = `${parseInt(weatherData.temp_f)}°F`;
+            arrCardsWeather[3].innerText = `${parseInt(weatherData.temp_f)}°`;
 
         }
-        // arrCardsWeather[3].innerText = `${parseInt(weatherData.temp_c)}°C`;
-        // arrCardsWeather[3].innerText = `${parseInt(obtainData(lastDataJson,rute))}°${letter}`;
 
         arrCardsWeather[1].appendChild = `.card${weatherData.time_epoch}`;
         arrCardsWeather[2].appendChild = `.card${weatherData.time_epoch}`;
@@ -462,10 +487,12 @@ function fillData(weatherData) {
     const titleCity = document.querySelector('.titleCity');
     const containerDateAndTime = document.querySelector('.containerDateAndTime');
     const titleGrades = document.querySelector('.titleGrades');
+    const countryFlag = document.querySelector('.countryFlag');
 
     titleWeather.innerText = `${weatherData.current.condition.text}`;
+    countryFlag.src = `https://hatscripts.github.io/circle-flags/flags/${countryCode}.svg`;
     titleCity.innerText = `${weatherData.location.name}`;
-    // titleGrades.innerText = `${parseInt(weatherData.current.temp_c)}°C`;
+    
     if (currentUnit === 'C') {
         titleGrades.innerText = `${parseInt(weatherData.current.temp_c)}°C`;
 
@@ -473,7 +500,6 @@ function fillData(weatherData) {
         titleGrades.innerText = `${parseInt(weatherData.current.temp_f)}°F`;
 
     }
-    // titleGrades.innerText = `${parseInt(obtainData(weatherData,rute))}°${letter}`;
     containerDateAndTime.lastChild.innerText = `${weatherData.current.last_updated}`;
 
 
@@ -510,18 +536,13 @@ function generateWeatherCardsForecastDays(arr) {
         arrCardsNextDays[5].appendChild = `.dAWT${weatherData.date_epoch}`;
 
         if (currentUnit === 'C') {
-            arrCardsNextDays[6].innerText = `${parseInt(weatherData.day.maxtemp_c)}`;
-            arrCardsNextDays[7].innerText = `${parseInt(weatherData.day.mintemp_c)}`;
+            arrCardsNextDays[6].innerText = `${parseInt(weatherData.day.maxtemp_c)}°`;
+            arrCardsNextDays[7].innerText = `${parseInt(weatherData.day.mintemp_c)}°`;
 
         } else {
-            arrCardsNextDays[6].innerText = `${parseInt(weatherData.day.maxtemp_f)}`;
-            arrCardsNextDays[7].innerText = `${parseInt(weatherData.day.mintemp_f)}`;
+            arrCardsNextDays[6].innerText = `${parseInt(weatherData.day.maxtemp_f)}°`;
+            arrCardsNextDays[7].innerText = `${parseInt(weatherData.day.mintemp_f)}°`;
         }
-
-        // arrCardsNextDays[6].innerText = `${parseInt(obtainData(lastDataJson,rute))}`;
-        // arrCardsNextDays[6].innerText = `${parseInt(weatherData.day.maxtemp_c)}`;
-        // arrCardsNextDays[7].innerText = `${parseInt(weatherData.day.mintemp_c)}`;
-        // arrCardsNextDays[7].innerText = `${parseInt(obtainData(lastDataJson,rute))}`;
             
         arrCardsNextDays[6].appendChild = `.containerDegress${weatherData.date_epoch}`;
         arrCardsNextDays[7].appendChild = `.containerDegress${weatherData.date_epoch}`;
@@ -558,7 +579,6 @@ function convertTemperatureUnit() {
     generateWeatherCardsForecastDays(lastDataJson.forecast.forecastday)
    
 }
-
 
 function addFunctionToBtnsCF() {
     
