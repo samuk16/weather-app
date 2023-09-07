@@ -293,18 +293,31 @@ function createCountrySearchElements() {
     
     const containerSearchBar = document.querySelector('.containerSearchBar');
 
-    containerSearchBar.addEventListener('click', () => {
+    containerSearchBar.addEventListener('click', (e) => {
+        e.stopPropagation();
 
         EventManager.emit('createElements', arrCountryFinder)
-        
-
         inputCountry();
+        // document.addEventListener('click', (e) => {
+
+        //     const countryFinder = document.querySelector(`.containerCountryFinder`);
+        //     let target = e.target;
+    
+        //     if (countryFinder && !countryFinder.contains(target)) {
+        //             EventManager.emit('deleteElement', countryFinder)
+    
+        //     }
+        // })
+        
+        closeCountryFinder();
+
+
 
     })
 }
 
 function inputCountry() {
-    
+
     const searchBar = document.querySelector('.searchBar')
 
     searchBar.addEventListener('keyup', (e => {
@@ -595,6 +608,23 @@ function addFunctionToBtnsCF() {
         convertTemperatureUnit()
     })
 
+}
+
+function closeCountryFinder() {
+    
+
+    document.addEventListener('click', (e) => {
+
+        const countryFinder = document.querySelector(`.containerCountryFinder`);
+        let target = e.target;
+
+        if (countryFinder && !countryFinder.contains(target)) {
+            
+            EventManager.emit('deleteElement', countryFinder)
+
+        }
+    })
+    
 }
 
 export {arrCountryFinder,arrCountryCard, createCountrySearchElements}
