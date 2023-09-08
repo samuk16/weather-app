@@ -1,4 +1,3 @@
-
 import { EventManager } from './pubSub';
 import { format } from 'date-fns';
 import ScrollBooster from 'scrollbooster';
@@ -8,7 +7,7 @@ const arrCountryFinder = [
     {
         elementType: 'div',
         attributes: {class:'containerCountryFinder'},
-        appendChild: 'body',
+        appendChild: '.containerMain',
 
     },
 
@@ -58,7 +57,7 @@ const arrCountryFinder = [
     {
         elementType: 'div',
         attributes: {class:'containerGps'},
-        innerHTML:'<?xml version="1.0" encoding="UTF-8"?><svg width="24px" height="24px" stroke-width="1.5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" color="#000000"><path d="M20 10c0 4.418-8 12-8 12s-8-7.582-8-12a8 8 0 1116 0z" stroke="#000000" stroke-width="1.5"></path><path d="M12 11a1 1 0 100-2 1 1 0 000 2z" fill="#000000" stroke="#000000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>',
+        innerHTML: '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M17.6569 16.6569C16.7202 17.5935 14.7616 19.5521 13.4138 20.8999C12.6327 21.681 11.3677 21.6814 10.5866 20.9003C9.26234 19.576 7.34159 17.6553 6.34315 16.6569C3.21895 13.5327 3.21895 8.46734 6.34315 5.34315C9.46734 2.21895 14.5327 2.21895 17.6569 5.34315C20.781 8.46734 20.781 13.5327 17.6569 16.6569Z" stroke="#111827" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M15 11C15 12.6569 13.6569 14 12 14C10.3431 14 9 12.6569 9 11C9 9.34315 10.3431 8 12 8C13.6569 8 15 9.34315 15 11Z" stroke="#111827" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
         appendChild: '.searchBarAndGps',
 
     },
@@ -291,25 +290,25 @@ function flagT() {
 
 function createCountrySearchElements() {
     
-    const containerSearchBar = document.querySelector('.containerSearchBar');
+    const svgUbication = document.querySelector('.svgUbication');
 
-    containerSearchBar.addEventListener('click', (e) => {
-        e.stopPropagation();
+    let arrColorAndBtn1 = [svgUbication];
+    EventManager.emit('transitionBgBtn',arrColorAndBtn1)
 
-        EventManager.emit('createElements', arrCountryFinder)
-        inputCountry();
-        // document.addEventListener('click', (e) => {
-
-        //     const countryFinder = document.querySelector(`.containerCountryFinder`);
-        //     let target = e.target;
+    svgUbication.addEventListener('click', (e) => {
+        e.stopPropagation();       
     
-        //     if (countryFinder && !countryFinder.contains(target)) {
-        //             EventManager.emit('deleteElement', countryFinder)
-    
-        //     }
-        // })
+        EventManager.emit('transitionBtnClick', '.svgUbication')
+
+        const containerCountryFinder = document.querySelector('.containerCountryFinder');
+
+        if (!containerCountryFinder) {
+            EventManager.emit('createElements', arrCountryFinder)
+            EventManager.emit('fadeInAndGrow','.containerCountryFinder')
+            inputCountry();
+            closeCountryFinder();
+        }
         
-        closeCountryFinder();
 
 
 
@@ -353,7 +352,8 @@ async function searchCountry(searchData) {
         }
 
         generateCountryCards(countryData.results);
-        
+
+        EventManager.emit('fadeInDelayedDivs','.containerSearchCard')
 
     } catch (error) {
 
@@ -373,7 +373,9 @@ async function weatherData(latitude,longitude) {
         const weatherData = await response.json();
         lastDataJson = weatherData;
         generateWeatherCardsHour(weatherData.forecast.forecastday[0].hour)
+        EventManager.emit('fadeInDelayedDivs','.cardStyle')
         generateWeatherCardsForecastDays(weatherData.forecast.forecastday)
+        EventManager.emit('fadeInDelayedDivs','.cardNextDays')
         fillData(weatherData);
         addFunctionToBtnsCF();
 
@@ -446,11 +448,17 @@ function cardSelected(clas) {
     
     const card = document.querySelector(`.${clas}`);
     const containerCountryFinder = document.querySelector('.containerCountryFinder');
+    const containerCelcius = document.querySelector('.containerCelcius');
+
     card.addEventListener('click', () => {
         countryCode = card.dataset.codec;
-        EventManager.emit('deleteElement', containerCountryFinder)
+        EventManager.emit('fadeOutAndShrink', '.containerCountryFinder')
+        setTimeout(() => {
+            EventManager.emit('deleteElement', containerCountryFinder)
+            
+        }, 151);
         weatherData(countryLatAndLong.latitude,countryLatAndLong.longitude)
-
+        containerCelcius.classList.add('selected')
     })
 
 
@@ -588,8 +596,11 @@ function addScrollBoosterToCardsWeather() {
 function convertTemperatureUnit() {
 
     generateWeatherCardsHour(lastDataJson.forecast.forecastday[0].hour)
+    EventManager.emit('fadeInDelayedDivs','.cardStyle')
     fillData(lastDataJson)
     generateWeatherCardsForecastDays(lastDataJson.forecast.forecastday)
+    EventManager.emit('fadeInDelayedDivs','.cardNextDays')
+
    
 }
 
@@ -599,11 +610,18 @@ function addFunctionToBtnsCF() {
     const containerfahrenheit  = document.querySelector('.containerfahrenheit ');
 
     containerCelcius.addEventListener('click', () => {
+
+        containerfahrenheit.classList.remove('selected')
+        containerCelcius.classList.add('selected')
         currentUnit = 'C';
         convertTemperatureUnit()
     
     })
     containerfahrenheit.addEventListener('click', () => {
+
+        
+        containerCelcius.classList.remove('selected')
+        containerfahrenheit.classList.add('selected')
         currentUnit = 'F';
         convertTemperatureUnit()
     })
@@ -620,7 +638,11 @@ function closeCountryFinder() {
 
         if (countryFinder && !countryFinder.contains(target)) {
             
-            EventManager.emit('deleteElement', countryFinder)
+            EventManager.emit('fadeOutAndShrink', '.containerCountryFinder')
+            setTimeout(() => {
+                EventManager.emit('deleteElement', countryFinder)
+                
+            }, 151);
 
         }
     })
