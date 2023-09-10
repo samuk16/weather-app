@@ -275,18 +275,8 @@ const loader = [
 let currentUnit = 'C';
 let lastDataJson;
 let countryCode;
+let count = 0;
 
-function flagT() {
-    
-    testFlag[0].attributes.src = 'https://hatscripts.github.io/circle-flags/flags/ar.svg';
-    testFlag[0].attributes.width = '24';
-
-    EventManager.emit('createElements', testFlag)
-
-    
-    
-
-}
 
 function createCountrySearchElements() {
     
@@ -307,6 +297,8 @@ function createCountrySearchElements() {
             EventManager.emit('fadeInAndGrow','.containerCountryFinder')
             inputCountry();
             closeCountryFinder();
+            getUbication();
+
         }
         
 
@@ -326,7 +318,8 @@ function inputCountry() {
         // console.log(test.value);
         if (!loaderElement) {
             delCards('searchCountryCards');
-            EventManager.emit('createElements', loader)
+            // EventManager.emit('createElements', loader)
+            createLoader('searchCountryCards');
         }
         searchCountry(test.value)
 
@@ -372,6 +365,18 @@ async function weatherData(latitude,longitude) {
         
         const weatherData = await response.json();
         lastDataJson = weatherData;
+
+        if (response.ok) {
+
+            const loaderElement = document.querySelector('.showbox');
+
+            if (loaderElement) {
+                EventManager.emit('deleteElement', loaderElement)
+                const loaderElement2 = document.querySelector('.showbox');
+                EventManager.emit('deleteElement', loaderElement2)
+            }
+        }
+        countryCode = `${weatherData.location.country.toLowerCase().slice(0,2)}`;
         generateWeatherCardsHour(weatherData.forecast.forecastday[0].hour)
         EventManager.emit('fadeInDelayedDivs','.cardStyle')
         generateWeatherCardsForecastDays(weatherData.forecast.forecastday)
@@ -387,7 +392,8 @@ async function weatherData(latitude,longitude) {
 function generateCountryCards(arr) {
     
     delCards('searchCountryCards');
-
+    // countryCode = `${arr[0].country_code.toLowerCase()}`;
+    // console.log(countryCode);
     arr.forEach(countryData => {
         
         let codeCLowerCase = countryData.country_code.toLowerCase();
@@ -451,12 +457,18 @@ function cardSelected(clas) {
     const containerCelcius = document.querySelector('.containerCelcius');
 
     card.addEventListener('click', () => {
+
         countryCode = card.dataset.codec;
         EventManager.emit('fadeOutAndShrink', '.containerCountryFinder')
         setTimeout(() => {
             EventManager.emit('deleteElement', containerCountryFinder)
             
         }, 151);
+        delCards('containerCardsWeather')
+        delCards('containerCardsNextDays')
+
+        createLoader('outerCardsWeather')
+        createLoader('containerCardsNextDays')
         weatherData(countryLatAndLong.latitude,countryLatAndLong.longitude)
         containerCelcius.classList.add('selected')
     })
@@ -649,4 +661,34 @@ function closeCountryFinder() {
     
 }
 
+function createLoader(appen) {
+    loader[0].appendChild = `.${appen}`;
+    loader[0].attributes.class = `showbox box${count}`;
+    loader[1].appendChild = `.box${count}`;
+    count++;
+
+    EventManager.emit('createElements', loader)
+
+}
+
+function getUbication() {
+    
+
+    const containerGps = document.querySelector('.containerGps');
+
+    containerGps.addEventListener('click', () => {
+        navigator.geolocation.getCurrentPosition((position) => {
+
+            EventManager.emit('fadeOutAndShrink', '.containerCountryFinder')
+
+            delCards('containerCardsWeather')
+            delCards('containerCardsNextDays')
+
+            createLoader('outerCardsWeather')
+            createLoader('containerCardsNextDays')
+            weatherData(position.coords.latitude, position.coords.longitude)
+        })    
+    })
+    
+}
 export {arrCountryFinder,arrCountryCard, createCountrySearchElements}
