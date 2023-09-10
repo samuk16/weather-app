@@ -272,6 +272,27 @@ const loader = [
     },
 ];
 
+const weatherConditionCodes = [
+	{   
+        
+        codes: [1000,],
+        urlImg: 'https://s6.imgcdn.dev/O4J9w.jpg',
+    },
+
+	{   
+        
+        codes: [1003,1006,1009,1030,1066,1072,1114,1117,1135,1147,1150,1204,1207,1210,1213,1216,1219,1222,1225,1237,1255,1258,1261,1264],
+        urlImg: 'https://s6.imgcdn.dev/OCDkT.jpg',
+    },
+
+	{   
+        
+        codes: [1063,1069,1087,1153,1168,1171,1183,1186,1189,1192,1195,1198,1201,1240,1243,1246,1249,1252,1273,1276,1279,1282],
+        urlImg: 'https://s6.imgcdn.dev/O48Pa.jpg',
+    }
+]
+;
+
 let currentUnit = 'C';
 let lastDataJson;
 let countryCode;
@@ -279,7 +300,6 @@ let count = 0;
 
 
 function createCountrySearchElements() {
-    
     const svgUbication = document.querySelector('.svgUbication');
 
     let arrColorAndBtn1 = [svgUbication];
@@ -376,7 +396,8 @@ async function weatherData(latitude,longitude) {
                 EventManager.emit('deleteElement', loaderElement2)
             }
         }
-        countryCode = `${weatherData.location.country.toLowerCase().slice(0,2)}`;
+        setBackgroundImg(weatherData.current.condition.code);
+        // countryCode = `${weatherData.location.country.toLowerCase().slice(0,2)}`;
         generateWeatherCardsHour(weatherData.forecast.forecastday[0].hour)
         EventManager.emit('fadeInDelayedDivs','.cardStyle')
         generateWeatherCardsForecastDays(weatherData.forecast.forecastday)
@@ -690,5 +711,21 @@ function getUbication() {
         })    
     })
     
+}
+
+function setBackgroundImg(code) {
+    
+    const containerMain = document.querySelector('.containerMain');
+
+    weatherConditionCodes.forEach(obj => {
+
+        obj.codes.forEach( codeCondition => {
+
+            if (codeCondition === code) {
+                containerMain.style.backgroundImage = `url(${obj.urlImg})`;
+            }
+        })
+    })
+
 }
 export {arrCountryFinder,arrCountryCard, createCountrySearchElements}
