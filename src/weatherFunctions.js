@@ -23,8 +23,15 @@ const arrCountryFinder = [
 
     {
         elementType: 'div',
-        attributes: {class:'searchCountryCards'},
+        attributes: {class:'outerSearchCountryCards'},
         appendChild: '.containerCountryFinder',
+
+    },
+
+    {
+        elementType: 'div',
+        attributes: {class:'searchCountryCards'},
+        appendChild: '.outerSearchCountryCards',
 
     },
 
@@ -290,8 +297,24 @@ const weatherConditionCodes = [
         codes: [1063,1069,1087,1153,1168,1171,1183,1186,1189,1192,1195,1198,1201,1240,1243,1246,1249,1252,1273,1276,1279,1282],
         urlImg: 'https://s6.imgcdn.dev/O48Pa.jpg',
     }
-]
-;
+];
+
+const containerCardsWeatherMobile = [
+
+    {
+        elementType: 'div',
+        attributes: {class:'outerCardsWeatherMobile'},
+        appendChild: '.containerRight',
+
+    },
+    {
+        elementType: 'div',
+        attributes: {class:'containerCardsWeatherMobile'},
+        appendChild: '.outerCardsWeatherMobile',
+
+    },
+];
+
 
 let currentUnit = 'C';
 let lastDataJson;
@@ -398,7 +421,12 @@ async function weatherData(latitude,longitude) {
         }
         setBackgroundImg(weatherData.current.condition.code);
         // countryCode = `${weatherData.location.country.toLowerCase().slice(0,2)}`;
-        generateWeatherCardsHour(weatherData.forecast.forecastday[0].hour)
+        const outerCardsWeatherMobile = document.querySelector('.outerCardsWeatherMobile');
+        if (outerCardsWeatherMobile) {
+            generateWeatherCardsHour(weatherData.forecast.forecastday[0].hour,'containerCardsWeatherMobile')
+        }else{
+            generateWeatherCardsHour(weatherData.forecast.forecastday[0].hour,'containerCardsWeather')            
+        }
         EventManager.emit('fadeInDelayedDivs','.cardStyle')
         generateWeatherCardsForecastDays(weatherData.forecast.forecastday)
         EventManager.emit('fadeInDelayedDivs','.cardNextDays')
@@ -447,7 +475,7 @@ function generateCountryCards(arr) {
         cardSelected(`card${countryData.id}`)
         
     });
-
+    addScrollBoosterToCardsCountry();
 }
 
 function delCards(clas) {
@@ -497,13 +525,14 @@ function cardSelected(clas) {
 
 }
 
-function generateWeatherCardsHour(arr) {
+function generateWeatherCardsHour(arr,append) {
     
     delCards('containerCardsWeather')
 
     arr.forEach(weatherData => {
 
         arrCardsWeather[0].attributes.class = `containerCard cardStyle card${weatherData.time_epoch}`;
+        arrCardsWeather[0].appendChild = `.${append}`;
         
         arrCardsWeather[1].innerText = `${weatherData.time.slice(-5)}`;
         
@@ -615,20 +644,53 @@ function generateWeatherCardsForecastDays(arr) {
 }
 
 function addScrollBoosterToCardsWeather() {
-    
+    const outerCardsWeatherMobile = document.querySelector('.outerCardsWeatherMobile');
+    const outerCardsWeather = document.querySelector('.outerCardsWeather');
+
+    let clas1 = 'outerCardsWeather';
+    let clas2 = 'containerCardsWeather';
+
+    if (outerCardsWeather) {
+        clas1 = 'outerCardsWeather';
+        clas2 = 'containerCardsWeather';
+        console.log('pc');
+    }
+    if (outerCardsWeatherMobile && outerCardsWeather) {
+        clas1 = 'outerCardsWeatherMobile';
+        clas2 = 'containerCardsWeatherMobile';
+        console.log('mobile');
+    }
     new ScrollBooster({
-        viewport: document.querySelector('.outerCardsWeather'),
-        content: document.querySelector('.containerCardsWeather'),
+        // viewport: document.querySelector(`.outerCardsWeather`),
+        viewport: document.querySelector(`.${clas1}`),
+        // content: document.querySelector('.containerCardsWeather'),
+        content: document.querySelector(`.${clas2}`),
         scrollMode: 'transform', 
         direction: 'horizontal', 
         emulateScroll: true, 
-      });
+    });
 
+}
+
+function addScrollBoosterToCardsCountry() {
+    
+
+    new ScrollBooster({
+        viewport: document.querySelector(`.outerSearchCountryCards`),
+        content: document.querySelector('.searchCountryCards'),
+        scrollMode: 'transform', 
+        direction: 'vertical', 
+        emulateScroll: true, 
+        // preventDefaultOnEmulateScroll:'vertical',
+        bounce:true,
+        pointerMode: 'touch',
+        lockScrollOnDragDirection: 'vertical',
+    });
 }
 
 function convertTemperatureUnit() {
 
-    generateWeatherCardsHour(lastDataJson.forecast.forecastday[0].hour)
+    generateWeatherCardsHour(lastDataJson.forecast.forecastday[0].hour,'containerCardsWeather')
     EventManager.emit('fadeInDelayedDivs','.cardStyle')
     fillData(lastDataJson)
     generateWeatherCardsForecastDays(lastDataJson.forecast.forecastday)
@@ -728,4 +790,32 @@ function setBackgroundImg(code) {
     })
 
 }
-export {arrCountryFinder,arrCountryCard, createCountrySearchElements}
+
+function handleResize() {
+    
+
+    const screenWidth = window.innerWidth;
+    const outerCardsWeather = document.querySelector('.outerCardsWeatherMobile');
+
+    if (screenWidth <= 805) {
+
+        if (!outerCardsWeather) {
+            EventManager.emit('createElements', containerCardsWeatherMobile)
+
+            if (lastDataJson) {
+                generateWeatherCardsHour(lastDataJson.forecast.forecastday[0].hour,'containerCardsWeatherMobile')
+                EventManager.emit('fadeInDelayedDivs','.cardStyle')
+            }
+            
+        
+        }
+        
+    }else{
+        if (outerCardsWeather) {
+            EventManager.emit('deleteElement', outerCardsWeather)            
+        }
+    }
+
+
+}
+export {arrCountryFinder,arrCountryCard, createCountrySearchElements,handleResize}
