@@ -82,14 +82,14 @@ body{
 
 }
 
-.outerCardsWeather{
+.outerCardsWeather,.outerCardsWeatherMobile{
 
     width: 100%;
     margin: auto;
     overflow: hidden;
 }
 
-.containerCardsWeather{
+.containerCardsWeather,.containerCardsWeatherMobile{
 
     display: flex;
     gap: 20px;
@@ -136,7 +136,7 @@ body{
     /* width: 100%; */
     /* background-color: var(--backContainerSecond); */
     background-color: rgba(0, 0, 0, 0.50);
-    backdrop-filter:blur(10px);
+    /* backdrop-filter:blur(10px); */
     gap: 20px;
     padding: 10px;
 }
@@ -358,6 +358,12 @@ body{
 
 }
 
+.outerSearchCountryCards{
+    height: 100%;
+    overflow: hidden;
+    padding: 2px;
+}
+
 .searchCountryCards{
     display: flex;
     flex-direction: column;
@@ -496,3 +502,54 @@ body{
 
   /* --------------------------------------------------------- */
   /* 1355 */
+
+
+  @media screen and (max-width: 1355px){
+
+    .containerMain{
+
+        grid-template-columns: 80% 20%;
+    }
+
+  }
+  @media screen and (max-width: 1010px){
+
+    .containerMain{
+
+        grid-template-columns: 75% 25%;
+    }
+
+  }
+  @media screen and (max-width: 806px){
+
+    .containerMain{
+
+        /* grid-template-columns: 65% 35%; */
+        grid-template-columns: 100%;
+    }
+
+    .containerLeft{
+
+        display: none;
+    }
+
+    .containerRight{
+
+        padding: 20px;
+
+    }
+
+    .containerCountryFinder{
+
+        min-width: 95%;
+        /* backdrop-filter: blur(10px); */
+        /* height: 95%; */
+        max-height: 95%;
+    }
+
+    .containerSearchCard {
+
+        min-width: 95%;
+    }
+
+  }
