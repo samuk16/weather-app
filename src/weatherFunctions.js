@@ -150,7 +150,6 @@ const arrCardsWeather = [
     {
         elementType: 'div',
         attributes: {class:'svgWeather'},
-        // innerHTML: '<?xml version="1.0" encoding="UTF-8"?><svg width="24px" height="24px" stroke-width="1.5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" color="#000000" data-darkreader-inline-color="" style="--darkreader-inline-color: #e8e6e3;"><path d="M6 13c-1.667 0-5 1-5 5s3.333 5 5 5h12c1.667 0 5-1 5-5s-3.333-5-5-5M12 12a3 3 0 100-6 3 3 0 000 6zM19 9h1M12 2V1M18.5 3.5l-1 1M5.5 3.5l1 1M4 9h1" stroke="#000000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-darkreader-inline-stroke="" style="--darkreader-inline-stroke: #000000;"></path></svg>',
         appendChild: '.containerCard',
 
     },
@@ -187,7 +186,6 @@ const arrCardsNextDays = [
     {
         elementType: 'div',
         attributes: {class:'svgWeatherNextDays'},
-        // innerHTML: '<?xml version="1.0" encoding="UTF-8"?><svg width="24px" height="24px" stroke-width="1.5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" color="#000000" data-darkreader-inline-color="" style="--darkreader-inline-color: #e8e6e3;"><path d="M6 13c-1.667 0-5 1-5 5s3.333 5 5 5h12c1.667 0 5-1 5-5s-3.333-5-5-5M12 12a3 3 0 100-6 3 3 0 000 6zM19 9h1M12 2V1M18.5 3.5l-1 1M5.5 3.5l1 1M4 9h1" stroke="#000000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" data-darkreader-inline-stroke="" style="--darkreader-inline-stroke: #000000;"></path></svg>',
         appendChild: '.cardNextDays',
 
     },
@@ -356,10 +354,6 @@ function createCountrySearchElements() {
             getUbication();
 
         }
-        
-
-
-
     })
 }
 
@@ -371,10 +365,8 @@ function inputCountry() {
         
         let test = e.target;
         const loaderElement = document.querySelector('.showbox');
-        // console.log(test.value);
         if (!loaderElement) {
             delCards('searchCountryCards');
-            // EventManager.emit('createElements', loader)
             createLoader('searchCountryCards');
         }
         searchCountry(test.value)
@@ -406,7 +398,6 @@ async function searchCountry(searchData) {
 
     } catch (error) {
 
-        console.log(error);
     }
    
 
@@ -420,6 +411,12 @@ async function weatherData(latitude,longitude) {
         const response = await fetch(`http://api.weatherapi.com/v1/forecast.json?key=b2845727c0964864b50235958232908&q=${latitude},${longitude}&days=3&aqi=no&alerts=no`, {mode: 'cors'});
         
         const weatherData = await response.json();
+
+        const response1 = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${weatherData.location.name}&count=1&language=en&format=json`, {mode: 'cors'});
+
+        const countryData = await response1.json();
+
+        countryCode = countryData.results[0].country_code.toLowerCase();
         lastDataJson = weatherData;
 
         if (response.ok) {
@@ -783,6 +780,7 @@ function getUbication() {
     
 
     const containerGps = document.querySelector('.containerGps');
+    const containerCelcius = document.querySelector('.containerCelcius');
 
     containerGps.addEventListener('click', () => {
         navigator.geolocation.getCurrentPosition((position) => {
@@ -795,6 +793,7 @@ function getUbication() {
             createLoader('outerCardsWeather')
             createLoader('containerCardsNextDays')
             weatherData(position.coords.latitude, position.coords.longitude)
+            containerCelcius.classList.add('selected')
         })    
     })
     
