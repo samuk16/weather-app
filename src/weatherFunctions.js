@@ -119,17 +119,6 @@ const arrCountryCard = [
 
 ]
 
-const testFlag = [
-
-    {
-        elementType: 'img',
-        attributes: {class:'flagTest'},
-        appendChild: '.containerDateAndTitleWeather',
-
-    },
-
-];
-
 const countryLatAndLong = {
 
     latitude: 'a',
@@ -315,6 +304,30 @@ const containerCardsWeatherMobile = [
     },
 ];
 
+const containerDateAndTimeMobile = [
+
+    {
+        elementType: 'div',
+        attributes: {class:'containerDateAndTimeMobile'},
+        appendChild: '.containerRight',
+
+    },
+
+    {
+        elementType: 'p',
+        attributes: {class:'lastUpdated'},
+        innerText: 'Last updated',
+        appendChild: '.containerDateAndTimeMobile',
+
+    },
+
+    {
+        elementType: 'p',
+        attributes: {class:'date'},
+        innerText: '11:00',
+        appendChild: '.containerDateAndTimeMobile',
+    },
+]
 
 let currentUnit = 'C';
 let lastDataJson;
@@ -420,7 +433,6 @@ async function weatherData(latitude,longitude) {
             }
         }
         setBackgroundImg(weatherData.current.condition.code);
-        // countryCode = `${weatherData.location.country.toLowerCase().slice(0,2)}`;
         const outerCardsWeatherMobile = document.querySelector('.outerCardsWeatherMobile');
         if (outerCardsWeatherMobile) {
             generateWeatherCardsHour(weatherData.forecast.forecastday[0].hour,'containerCardsWeatherMobile')
@@ -441,8 +453,6 @@ async function weatherData(latitude,longitude) {
 function generateCountryCards(arr) {
     
     delCards('searchCountryCards');
-    // countryCode = `${arr[0].country_code.toLowerCase()}`;
-    // console.log(countryCode);
     arr.forEach(countryData => {
         
         let codeCLowerCase = countryData.country_code.toLowerCase();
@@ -526,8 +536,14 @@ function cardSelected(clas) {
 }
 
 function generateWeatherCardsHour(arr,append) {
-    
-    delCards('containerCardsWeather')
+
+    const outerCardsWeatherMobile = document.querySelector('.outerCardsWeatherMobile');
+
+    if (outerCardsWeatherMobile) {
+        delCards('containerCardsWeatherMobile')
+    }else{
+        delCards('containerCardsWeather')
+    }
 
     arr.forEach(weatherData => {
 
@@ -571,6 +587,8 @@ function fillData(weatherData) {
     const containerDateAndTime = document.querySelector('.containerDateAndTime');
     const titleGrades = document.querySelector('.titleGrades');
     const countryFlag = document.querySelector('.countryFlag');
+    const containerDateAndTimeMobile = document.querySelector('.containerDateAndTimeMobile');
+
 
     titleWeather.innerText = `${weatherData.current.condition.text}`;
     countryFlag.src = `https://hatscripts.github.io/circle-flags/flags/${countryCode}.svg`;
@@ -583,7 +601,12 @@ function fillData(weatherData) {
         titleGrades.innerText = `${parseInt(weatherData.current.temp_f)}°F`;
 
     }
-    containerDateAndTime.lastChild.innerText = `${weatherData.current.last_updated}`;
+
+    if (containerDateAndTimeMobile) {
+        containerDateAndTimeMobile.lastChild.innerText = `${weatherData.current.last_updated}`;        
+    }else{
+        containerDateAndTime.lastChild.innerText = `${weatherData.current.last_updated}`;     
+    }
 
 
 }
@@ -653,17 +676,13 @@ function addScrollBoosterToCardsWeather() {
     if (outerCardsWeather) {
         clas1 = 'outerCardsWeather';
         clas2 = 'containerCardsWeather';
-        console.log('pc');
     }
     if (outerCardsWeatherMobile && outerCardsWeather) {
         clas1 = 'outerCardsWeatherMobile';
         clas2 = 'containerCardsWeatherMobile';
-        console.log('mobile');
     }
     new ScrollBooster({
-        // viewport: document.querySelector(`.outerCardsWeather`),
         viewport: document.querySelector(`.${clas1}`),
-        // content: document.querySelector('.containerCardsWeather'),
         content: document.querySelector(`.${clas2}`),
         scrollMode: 'transform', 
         direction: 'horizontal', 
@@ -681,7 +700,6 @@ function addScrollBoosterToCardsCountry() {
         scrollMode: 'transform', 
         direction: 'vertical', 
         emulateScroll: true, 
-        // preventDefaultOnEmulateScroll:'vertical',
         bounce:true,
         pointerMode: 'touch',
         lockScrollOnDragDirection: 'vertical',
@@ -690,7 +708,14 @@ function addScrollBoosterToCardsCountry() {
 
 function convertTemperatureUnit() {
 
-    generateWeatherCardsHour(lastDataJson.forecast.forecastday[0].hour,'containerCardsWeather')
+
+    const outerCardsWeatherMobile = document.querySelector('.outerCardsWeatherMobile');
+
+    if (outerCardsWeatherMobile) {
+        generateWeatherCardsHour(lastDataJson.forecast.forecastday[0].hour,'containerCardsWeatherMobile')
+    }else{
+        generateWeatherCardsHour(lastDataJson.forecast.forecastday[0].hour,'containerCardsWeather')            
+    }
     EventManager.emit('fadeInDelayedDivs','.cardStyle')
     fillData(lastDataJson)
     generateWeatherCardsForecastDays(lastDataJson.forecast.forecastday)
@@ -796,13 +821,21 @@ function handleResize() {
 
     const screenWidth = window.innerWidth;
     const outerCardsWeather = document.querySelector('.outerCardsWeatherMobile');
+    const containerDateAndTimeMobileD = document.querySelector('.containerDateAndTimeMobile');
+    const containerDateAndTime = document.querySelector('.containerDateAndTime');
 
     if (screenWidth <= 805) {
 
         if (!outerCardsWeather) {
+
+            delCards('containerCardsWeather')
+
             EventManager.emit('createElements', containerCardsWeatherMobile)
+            EventManager.emit('createElements', containerDateAndTimeMobile)
+            const containerDateAndTimeMobileD = document.querySelector('.containerDateAndTimeMobile');
 
             if (lastDataJson) {
+                containerDateAndTimeMobileD.lastChild.innerText = `${lastDataJson.current.last_updated}`;        
                 generateWeatherCardsHour(lastDataJson.forecast.forecastday[0].hour,'containerCardsWeatherMobile')
                 EventManager.emit('fadeInDelayedDivs','.cardStyle')
             }
@@ -812,7 +845,15 @@ function handleResize() {
         
     }else{
         if (outerCardsWeather) {
-            EventManager.emit('deleteElement', outerCardsWeather)            
+            EventManager.emit('deleteElement', outerCardsWeather)           
+            EventManager.emit('deleteElement', containerDateAndTimeMobileD)
+
+            if (lastDataJson) {
+                containerDateAndTime.lastChild.innerText = `${lastDataJson.current.last_updated}`;     
+                generateWeatherCardsHour(lastDataJson.forecast.forecastday[0].hour,'containerCardsWeather')
+                EventManager.emit('fadeInDelayedDivs','.cardStyle')
+            }
+           
         }
     }
 
