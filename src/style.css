@@ -1,10 +1,8 @@
 :root{
  
     --backContainer: rgba(38, 37, 37, 0.5);
-    /* --backContainer: #26252580; */
     --backContainerSecond: rgba(217, 217, 217, 0.2);
     --backContainerSecond2: rgba(211, 211, 211, 0.30);
-    --backHoverBtn: #9A82DB ;
     
 }
 
@@ -32,7 +30,6 @@ body{
     background: url(./img/rain.jpg);
     
     background-size: cover;
-    /* background-image: url(https://ooncesud.sirv.com/weather%20Images/clear.jpg); */
 
 }
 
@@ -40,8 +37,6 @@ body{
 
 .containerLeft{
 
-    /* flex-grow: 2; */
-    /* width: 85%; */
     display: flex;
     flex-direction: column;
     padding: 20px;
@@ -61,7 +56,7 @@ body{
     justify-content: space-between;
 }
 
-.containerDateAndTime{
+.containerDateAndTime,.containerDateAndTimeMobile{
 
     display: flex;
     flex-direction: column;
@@ -72,7 +67,6 @@ body{
 
     border-radius: 10px;
 
-    /* background-color: rgba(0, 0, 0, 0.507); */
     background-color: var(--backContainer)
 }
 
@@ -93,10 +87,6 @@ body{
 
     display: flex;
     gap: 20px;
-    /* justify-content: center; */
-    /* width: 1000px; */
-    /* margin: auto; */
-    /* overflow: auto; */
 }
 
 .containerCard{
@@ -133,10 +123,7 @@ body{
 
     display: flex;
     flex-direction: column;
-    /* width: 100%; */
-    /* background-color: var(--backContainerSecond); */
     background-color: rgba(0, 0, 0, 0.50);
-    /* backdrop-filter:blur(10px); */
     gap: 20px;
     padding: 10px;
 }
@@ -147,8 +134,6 @@ body{
     flex-direction: column;
     align-items: center;
     gap: 20px;
-
-    /* padding: 10px; */
 
 }
 
@@ -208,17 +193,12 @@ body{
     display: flex;
     justify-content: center;
     align-items: center;
-
-    /* background-color: var(--backContainerSecond2); */
-    /* width: 30px; */
-    /* height: 30px; */
     border-radius: 5px;
     padding: 10px;
     cursor: pointer;
 
     transition: all 0.15s ease-in-out;
 
-    /* color: black; */
 }
 
 .celcius,.fahrenheit{
@@ -237,6 +217,7 @@ body{
 
     display: flex;
     gap: 5px;
+    align-items: center;
 
 }
 
@@ -258,7 +239,6 @@ body{
     display: flex;
     flex-direction: column;
     align-items: center;
-    /* padding: 0 10px 10px 10px; */
     gap: 10px;
 }
 
@@ -282,8 +262,6 @@ body{
    user-select: none;
 
    cursor: pointer;
-
-   /* background-color: var(--backContainer); */
 
    border-radius: 5px;
    padding: 5px;
@@ -331,7 +309,6 @@ body{
     display: flex;
     flex-direction: column;
     align-items: center;
-    /* justify-self: end; */
     margin-left: auto;
 
 }
@@ -340,9 +317,6 @@ body{
 .containerCountryFinder{
 
     position: absolute;
-    /* top: 50%; */
-    /* right: 50%; */
-    /* transform: translate(50%, -50%); */
     align-self: center;
     justify-self: center;
     display: flex;
@@ -354,7 +328,6 @@ body{
     min-width: 400px;
     max-width: 500px;
     opacity: 0;
-    /* scale: 0; */
 
 }
 
@@ -422,8 +395,6 @@ body{
     cursor: pointer;
     user-select: none;
 
-    
-    /* width: 300px; */
     min-width: 400px;
     max-width: 500px;
     opacity: 0;
@@ -442,21 +413,27 @@ body{
     color: rgba(255, 255, 255, 0.6);
 }
 
+.countryFlag{
+
+    width: 24px;
+    height: 24px;
+}
+
 /* --------------------------------------------------------- */
 
 .loader {
     position: relative;
     margin: 0 auto;
     width: 50px;
-  }
+}
 
-  .loader::before{
+.loader::before{
     content: '';
-      display: block;
-      padding-top: 100%;
-  }
-  
-  .circular {
+    display: block;
+    padding-top: 100%;
+}
+
+.circular {
     animation: rotate 2s linear infinite;
     height: 100%;
     transform-origin: center center;
@@ -467,89 +444,73 @@ body{
     left: 0;
     right: 0;
     margin: auto;
-  }
-  
-  .path {
+}
+
+.path {
     stroke-dasharray: 1, 200;
     stroke-dashoffset: 0;
     animation: dash 1.5s ease-in-out infinite, color 6s ease-in-out infinite;
     stroke-linecap: round;
     stroke: rgba(211, 211, 211, 0.50);
-  }
-  
-  @keyframes rotate {
-    100% {
-      transform: rotate(360deg);
-    }
-  }
-  
-  @keyframes dash {
-    0% {
-      stroke-dasharray: 1, 200;
-      stroke-dashoffset: 0;
-    }
-    50% {
-      stroke-dasharray: 89, 200;
-      stroke-dashoffset: -35px;
-    }
-    100% {
-      stroke-dasharray: 89, 200;
-      stroke-dashoffset: -124px;
-    }
-  }
-  
+}
 
+@keyframes rotate {
+  100% {
+    transform: rotate(360deg);
+  }
+}
+  
+@keyframes dash {
+  0% {
+    stroke-dasharray: 1, 200;
+    stroke-dashoffset: 0;
+  }
+  50% {
+    stroke-dasharray: 89, 200;
+    stroke-dashoffset: -35px;
+  }
+  100% {
+    stroke-dasharray: 89, 200;
+    stroke-dashoffset: -124px;
+  }
+}
 
   /* --------------------------------------------------------- */
-  /* 1355 */
 
 
-  @media screen and (max-width: 1355px){
+@media screen and (max-width: 1355px){
 
-    .containerMain{
-
-        grid-template-columns: 80% 20%;
-    }
-
+  .containerMain{
+    grid-template-columns: 80% 20%;
   }
-  @media screen and (max-width: 1010px){
+}
+@media screen and (max-width: 1010px){
 
-    .containerMain{
-
-        grid-template-columns: 75% 25%;
-    }
-
+  .containerMain{
+    grid-template-columns: 75% 25%;
   }
-  @media screen and (max-width: 806px){
-
-    .containerMain{
-
-        /* grid-template-columns: 65% 35%; */
-        grid-template-columns: 100%;
-    }
-
-    .containerLeft{
-
-        display: none;
-    }
-
-    .containerRight{
-
-        padding: 20px;
-
-    }
-
-    .containerCountryFinder{
-
-        min-width: 95%;
-        /* backdrop-filter: blur(10px); */
-        /* height: 95%; */
-        max-height: 95%;
-    }
-
-    .containerSearchCard {
-
-        min-width: 95%;
-    }
-
+}
+@media screen and (max-width: 806px){
+  .containerMain{
+    grid-template-columns: 100%;
   }
+  .containerLeft{
+    display: none;
+  }
+  .containerRight{
+    padding: 20px;
+  }
+  .containerCountryFinder{
+    min-width: 95%;
+    max-height: 95%;
+  }
+  .containerSearchCard {
+    min-width: 95%;
+  }
+  .containerDateAndTimeMobile{
+    position: absolute;
+    font-size: .7em;
+    gap: 2px;
+    padding: 8px;
+  }
+}
