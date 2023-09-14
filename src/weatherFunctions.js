@@ -408,7 +408,7 @@ async function weatherData(latitude,longitude) {
     
     try {
         
-        const response = await fetch(`http://api.weatherapi.com/v1/forecast.json?key=b2845727c0964864b50235958232908&q=${latitude},${longitude}&days=3&aqi=no&alerts=no`, {mode: 'cors'});
+        const response = await fetch(`https://api.weatherapi.com/v1/forecast.json?key=b2845727c0964864b50235958232908&q=${latitude},${longitude}&days=3&aqi=no&alerts=no`, {mode: 'cors'});
         
         const weatherData = await response.json();
 
