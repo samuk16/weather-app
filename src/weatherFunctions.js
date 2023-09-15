@@ -334,6 +334,9 @@ let count = 0;
 
 
 function createCountrySearchElements() {
+
+    weatherData('35.6895','139.6917')
+
     const svgUbication = document.querySelector('.svgUbication');
 
     let arrColorAndBtn1 = [svgUbication];
@@ -366,10 +369,11 @@ function inputCountry() {
         let test = e.target;
         const loaderElement = document.querySelector('.showbox');
         if (!loaderElement) {
+            searchCountry(test.value)
             delCards('searchCountryCards');
             createLoader('searchCountryCards');
         }
-        searchCountry(test.value)
+        
 
     }))
 }
@@ -431,16 +435,20 @@ async function weatherData(latitude,longitude) {
         }
         setBackgroundImg(weatherData.current.condition.code);
         const outerCardsWeatherMobile = document.querySelector('.outerCardsWeatherMobile');
+        const containerCelcius = document.querySelector('.containerCelcius');
+
         if (outerCardsWeatherMobile) {
             generateWeatherCardsHour(weatherData.forecast.forecastday[0].hour,'containerCardsWeatherMobile')
         }else{
             generateWeatherCardsHour(weatherData.forecast.forecastday[0].hour,'containerCardsWeather')            
         }
+
         EventManager.emit('fadeInDelayedDivs','.cardStyle')
         generateWeatherCardsForecastDays(weatherData.forecast.forecastday)
         EventManager.emit('fadeInDelayedDivs','.cardNextDays')
         fillData(weatherData);
         addFunctionToBtnsCF();
+        containerCelcius.classList.add('selected');
 
     } catch (error) {
         console.log(error);
@@ -510,7 +518,6 @@ function cardSelected(clas) {
     
     const card = document.querySelector(`.${clas}`);
     const containerCountryFinder = document.querySelector('.containerCountryFinder');
-    const containerCelcius = document.querySelector('.containerCelcius');
 
     card.addEventListener('click', () => {
 
@@ -526,7 +533,6 @@ function cardSelected(clas) {
         createLoader('outerCardsWeather')
         createLoader('containerCardsNextDays')
         weatherData(countryLatAndLong.latitude,countryLatAndLong.longitude)
-        containerCelcius.classList.add('selected')
     })
 
 
@@ -780,7 +786,6 @@ function getUbication() {
     
 
     const containerGps = document.querySelector('.containerGps');
-    const containerCelcius = document.querySelector('.containerCelcius');
 
     containerGps.addEventListener('click', () => {
         navigator.geolocation.getCurrentPosition((position) => {
@@ -793,7 +798,6 @@ function getUbication() {
             createLoader('outerCardsWeather')
             createLoader('containerCardsNextDays')
             weatherData(position.coords.latitude, position.coords.longitude)
-            containerCelcius.classList.add('selected')
         })    
     })
     
